@@ -5,7 +5,7 @@ import javax.swing.*;
  * Tic-Tac-Toe: Two-player Graphic version with better OO design.
  * The Board and Cell classes are separated in their own classes.
  */
-public class GameMain extends JPanel {
+public class TTT extends JPanel {
     private static final long serialVersionUID = 1L; // to prevent serializable warning
 
     // Define named constants for the drawing graphics
@@ -23,7 +23,7 @@ public class GameMain extends JPanel {
     private JLabel statusBar;    // for displaying status message
 
     /** Constructor to setup the UI and game components */
-    public GameMain() {
+    public TTT() {
 
         // This JPanel fires MouseEvent
         super.addMouseListener(new MouseAdapter() {
@@ -35,19 +35,26 @@ public class GameMain extends JPanel {
                 int row = mouseY / Cell.SIZE;
                 int col = mouseX / Cell.SIZE;
 
-                if (currentState == State.PLAYING) {
-                    if (row >= 0 && row < Board.ROWS && col >= 0 && col < Board.COLS
-                            && board.cells[row][col].content == Seed.NO_SEED) {
-                        // Update cells[][] and return the new game state after the move
-                        currentState = board.stepGame(currentPlayer, row, col);
-                        // Play appropriate sound clip
-                        if (currentState == State.PLAYING) {
-                            SoundEffect.gogo.play();
-                        } else {
-                            SoundEffect.die.play();
+//                if (currentState == State.PLAYING) {
+//                    if (row >= 0 && row < Board.ROWS && col >= 0 && col < Board.COLS
+//                            && board.cells[row][col].content == Seed.NO_SEED) {
+//                        // Update cells[][] and return the new game state after the move
+//                        currentState = board.stepGame(currentPlayer, row, col);
+//                        // Switch player
+//                        currentPlayer = (currentPlayer == Seed.totoro) ? Seed.piggy : Seed.totoro;
+//                    }
+//                }
+
+                if (col >= 0 && col < Board.COLS) {
+                    // Look for an empty cell starting from the bottom row
+                    for (row = Board.ROWS -1; row >= 0; row--) {
+                        if (board.cells[row][col].content == Seed.NO_SEED) {
+                            board.cells[row][col].content = currentPlayer; // Make a move
+                            currentState = board.stepGame(currentPlayer, row, col); // update state
+                            // Switch player
+                            currentPlayer = (currentPlayer == Seed.totoro) ? Seed.piggy : Seed.totoro;
+                            break;
                         }
-                        // Switch player
-                        currentPlayer = (currentPlayer == Seed.totoro) ? Seed.piggy : Seed.totoro;
                     }
                 } else {        // game over
                     newGame();  // restart the game
@@ -118,13 +125,13 @@ public class GameMain extends JPanel {
     }
 
     /** The entry "main" method */
-    public static void main(String[] args) {
+    public static void play() {
         // Run GUI construction codes in Event-Dispatching thread for thread safety
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 JFrame frame = new JFrame(TITLE);
                 // Set the content-pane of the JFrame to an instance of main JPanel
-                frame.setContentPane(new GameMain());
+                frame.setContentPane(new TTT());
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 frame.pack();
                 frame.setLocationRelativeTo(null); // center the application window

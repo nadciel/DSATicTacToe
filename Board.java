@@ -4,8 +4,8 @@ import java.awt.*;
  */
 public class Board {
     // Define named constants
-    public static final int ROWS = 3;  // ROWS x COLS cells
-    public static final int COLS = 3;
+    public static final int ROWS = 6;  // ROWS x COLS cells
+    public static final int COLS = 6;
     // Define named constants for drawing
     public static final int CANVAS_WIDTH = Cell.SIZE * COLS;  // the drawing canvas
     public static final int CANVAS_HEIGHT = Cell.SIZE * ROWS;
@@ -54,32 +54,67 @@ public class Board {
         cells[selectedRow][selectedCol].content = player;
 
         // Compute and return the new game state
-        if (cells[selectedRow][0].content == player  // 3-in-the-row
-                && cells[selectedRow][1].content == player
-                && cells[selectedRow][2].content == player
-                || cells[0][selectedCol].content == player // 3-in-the-column
-                && cells[1][selectedCol].content == player
-                && cells[2][selectedCol].content == player
-                || selectedRow == selectedCol     // 3-in-the-diagonal
-                && cells[0][0].content == player
-                && cells[1][1].content == player
-                && cells[2][2].content == player
-                || selectedRow + selectedCol == 2 // 3-in-the-opposite-diagonal
-                && cells[0][2].content == player
-                && cells[1][1].content == player
-                && cells[2][0].content == player) {
-            return (player == Seed.totoro) ? State.CROSS_WON : State.NOUGHT_WON;
-        } else {
-            // Nobody win. Check for DRAW (all cells occupied) or PLAYING.
-            for (int row = 0; row < ROWS; ++row) {
-                for (int col = 0; col < COLS; ++col) {
-                    if (cells[row][col].content == Seed.NO_SEED) {
-                        return State.PLAYING; // still have empty cells
-                    }
-                }
+        // Check for 4-in-a-line on the rowSelected
+        int count = 0;
+        for (int col = 0; col < COLS; ++col) {
+            if (cells[selectedRow][col].content == player) {
+                ++count;
+                if (count == 4) return (player == Seed.totoro) ? State.CROSS_WON : State.NOUGHT_WON;  // found
+            } else {
+                count = 0; // reset and count again if not consecutive
             }
-            return State.DRAW; // no empty cell, it's a draw
         }
+
+        // Check for 4-in-a-line on the colSelected
+        count = 0;
+        for (int row = 0; row < ROWS; ++row) {
+            if (cells[row][selectedCol].content == player) {
+                ++count;
+                if (count == 4) return (player == Seed.totoro) ? State.CROSS_WON : State.NOUGHT_WON;  // found
+            } else {
+                count = 0; // reset and count again if not consecutive
+            }
+        }
+
+        // Check for 4-in-a-line in the diagonal
+        count = 0;
+        for (int row = 0; row < ROWS; ++row) {
+            if (cells[row][row].content == player) {
+                ++count;
+                if (count == 4) return (player == Seed.totoro) ? State.CROSS_WON : State.NOUGHT_WON;  // found
+            } else {
+                count = 0; // reset and count again if not consecutive
+            }
+
+//        if (cells[selectedRow][0].content == player  // 3-in-the-row
+//                && cells[selectedRow][1].content == player
+//                && cells[selectedRow][2].content == player
+//                || cells[0][selectedCol].content == player // 3-in-the-column
+//                && cells[1][selectedCol].content == player
+//                && cells[2][selectedCol].content == player
+//                || selectedRow == selectedCol     // 3-in-the-diagonal
+//                && cells[0][0].content == player
+//                && cells[1][1].content == player
+//                && cells[2][2].content == player
+//                || selectedRow + selectedCol == 2 // 3-in-the-opposite-diagonal
+//                && cells[0][2].content == player
+//                && cells[1][1].content == player
+//                && cells[2][0].content == player) {
+//            return (player == Seed.totoro) ? State.CROSS_WON : State.NOUGHT_WON;
+//        }
+//          else{
+//                // Nobody win. Check for DRAW (all cells occupied) or PLAYING.
+//                for (int row = 0; row < ROWS; ++row) {
+//                    for (int col = 0; col < COLS; ++col) {
+//                        if (cells[row][col].content == Seed.NO_SEED) {
+//                            return State.PLAYING; // still have empty cells
+//                        }
+//                    }
+//                }
+//                return State.DRAW; // no empty cell, it's a draw
+//          }
+        }
+        return null;
     }
 
     /** Paint itself on the graphics canvas, given the Graphics context */

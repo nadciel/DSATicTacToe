@@ -5,7 +5,7 @@ import javax.swing.*;
  * Tic-Tac-Toe: Two-player Graphic version with better OO design.
  * The Board and Cell classes are separated in their own classes.
  */
-public class GameMain extends JPanel {
+public class TTT extends JPanel {
     private static final long serialVersionUID = 1L; // to prevent serializable warning
 
     // Define named constants for the drawing graphics
@@ -23,7 +23,7 @@ public class GameMain extends JPanel {
     private JLabel statusBar;    // for displaying status message
 
     /** Constructor to setup the UI and game components */
-    public GameMain() {
+    public TTT() {
 
         // This JPanel fires MouseEvent
         super.addMouseListener(new MouseAdapter() {
@@ -118,13 +118,13 @@ public class GameMain extends JPanel {
     }
 
     /** The entry "main" method */
-    public static void main(String[] args) {
+    public static void play() {
         // Run GUI construction codes in Event-Dispatching thread for thread safety
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 JFrame frame = new JFrame(TITLE);
                 // Set the content-pane of the JFrame to an instance of main JPanel
-                frame.setContentPane(new GameMain());
+                frame.setContentPane(new TTT());
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 frame.pack();
                 frame.setLocationRelativeTo(null); // center the application window

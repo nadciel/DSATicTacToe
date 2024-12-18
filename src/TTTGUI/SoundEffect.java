@@ -19,9 +19,9 @@ import javax.sound.sampled.UnsupportedAudioFileException;
  * For Eclipse, place the audio file under "src", which will be copied into "bin".
  */
 public enum SoundEffect {
-    gogo("gogo.wav"),
-    fight("fight.wav"),
-    die("die.wav");
+    gogo("TTTGUI/gogo.wav"),
+    fight("TTTGUI/fight.wav"),
+    die("TTTGUI/die.wav");
 
     /** Nested enumeration for specifying volume */
     public static enum Volume {

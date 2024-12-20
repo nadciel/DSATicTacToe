@@ -1,6 +1,9 @@
+package out;
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+
 /**
  * Tic-Tac-Toe: Two-player Graphic version with better OO design.
  * The Board and Cell classes are separated in their own classes.
@@ -9,12 +12,10 @@ public class TTT extends JPanel {
     private static final long serialVersionUID = 1L; // to prevent serializable warning
 
     // Define named constants for the drawing graphics
-    public static final String TITLE = "Tic Tac Toe";
-    public static final Color COLOR_BG = Color.WHITE;
-    public static final Color COLOR_BG_STATUS = new Color(216, 216, 216);
-    public static final Color COLOR_CROSS = new Color(239, 105, 80);  // Red #EF6950
-    public static final Color COLOR_NOUGHT = new Color(64, 154, 225); // Blue #409AE1
-    public static final Font FONT_STATUS = new Font("OCR A Extended", Font.PLAIN, 14);
+    public static java.lang.String TITLE = "Tic Tac Toe";
+    public static Color COLOR_BG = Color.WHITE;
+    public static Color COLOR_BG_STATUS = new Color(216, 216, 216);
+    public static Color COLOR_CROSS = new Color(239, 105, 80);  // Red #EF6950
 
     // Define game objects
     private Board board;         // the game board
@@ -53,13 +54,16 @@ public class TTT extends JPanel {
                     newGame();  // restart the game
                 }
                 // Refresh the drawing canvas
-                repaint();  // Callback paintComponent().
+                TTT.this.repaint();
+                if (TTT.this.currentState == State.PLAYING && TTT.this.currentPlayer == Seed.piggy) {
+                    TTT.this.playComp();
+                }
             }
         });
 
         // Setup the status bar (JLabel) to display status message
         statusBar = new JLabel();
-        statusBar.setFont(FONT_STATUS);
+        //statusBar.setFont(TTTGraphics.FONT_STATUS);
         statusBar.setBackground(COLOR_BG_STATUS);
         statusBar.setOpaque(true);
         statusBar.setPreferredSize(new Dimension(300, 30));
@@ -75,6 +79,33 @@ public class TTT extends JPanel {
         // Set up Game
         initGame();
         newGame();
+    }
+
+    private void playComp() {
+        System.out.println(this.currentState);
+        if (this.currentState == State.PLAYING) {
+            int rowRandom = (int)(Math.random() * (double)2.0F) + 1;
+
+            int colRandom;
+            for(colRandom = (int)(Math.random() * (double)2.0F) + 1; this.board.cells[rowRandom][colRandom].content != Seed.NO_SEED; colRandom = (int)(Math.random() * (double)2.0F) + 1) {
+                rowRandom = (int)(Math.random() * (double)2.0F) + 1;
+            }
+
+            System.out.println(rowRandom + " " + colRandom);
+            if (rowRandom >= 0 && rowRandom < 3 && colRandom >= 0 && colRandom < 3 && this.board.cells[rowRandom][colRandom].content == Seed.NO_SEED) {
+                this.currentState = this.board.stepGame(this.currentPlayer, rowRandom, colRandom);
+                if (this.currentState == State.PLAYING) {
+                    SoundEffect.gogo.play();
+                } else {
+                    SoundEffect.die.play();
+                }
+
+                this.currentPlayer = this.currentPlayer == Seed.totoro ? Seed.piggy : Seed.totoro;
+            }
+
+            this.repaint();
+        }
+
     }
 
     /** Initialize the game (run once) */
@@ -95,41 +126,45 @@ public class TTT extends JPanel {
 
     /** Custom painting codes on this JPanel */
     @Override
-    public void paintComponent(Graphics g) {  // Callback via repaint()
+    public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        setBackground(COLOR_BG); // set its background color
-
-        board.paint(g);  // ask the game board to paint itself
-
-        // Print status-bar message
-        if (currentState == State.PLAYING) {
-            statusBar.setForeground(Color.BLACK);
-            statusBar.setText((currentPlayer == Seed.totoro) ? "X's Turn" : "O's Turn");
-        } else if (currentState == State.DRAW) {
-            statusBar.setForeground(Color.RED);
-            statusBar.setText("It's a Draw! Click to play again.");
-        } else if (currentState == State.CROSS_WON) {
-            statusBar.setForeground(Color.RED);
-            statusBar.setText("'X' Won! Click to play again.");
-        } else if (currentState == State.NOUGHT_WON) {
-            statusBar.setForeground(Color.RED);
-            statusBar.setText("'O' Won! Click to play again.");
+        this.setBackground(COLOR_BG);
+        this.board.paint(g);
+        if (this.currentState == State.PLAYING) {
+            this.statusBar.setForeground(Color.BLACK);
+            this.statusBar.setText(this.currentPlayer == Seed.totoro ? "X's Turn" : "O's Turn");
+        } else if (this.currentState == State.DRAW) {
+            this.statusBar.setForeground(Color.RED);
+            this.statusBar.setText("It's a Draw! Click to play again.");
+        } else if (this.currentState == State.CROSS_WON) {
+            this.statusBar.setForeground(Color.RED);
+            this.statusBar.setText("'X' Won! Click to play again.");
+        } else if (this.currentState == State.NOUGHT_WON) {
+            this.statusBar.setForeground(Color.RED);
+            this.statusBar.setText("'O' Won! Click to play again.");
         }
+
     }
 
-    /** The entry "main" method */
     public static void play() {
-        // Run GUI construction codes in Event-Dispatching thread for thread safety
-        javax.swing.SwingUtilities.invokeLater(new Runnable() {
+        SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                JFrame frame = new JFrame(TITLE);
-                // Set the content-pane of the JFrame to an instance of main JPanel
+                JFrame frame = new JFrame("Tic Tac Toe");
                 frame.setContentPane(new TTT());
-                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                frame.setDefaultCloseOperation(3);
                 frame.pack();
-                frame.setLocationRelativeTo(null); // center the application window
-                frame.setVisible(true);            // show it
+                frame.setLocationRelativeTo((Component)null);
+                frame.setVisible(true);
             }
         });
+    }
+
+    static {
+        COLOR_BG = Color.WHITE;
+        COLOR_BG_STATUS = new Color(216, 216, 216);
+        COLOR_CROSS = new Color(239, 105, 80);
+        java.awt.Color COLOR_NOUGHT = new Color(64, 154, 225);
+        java.awt.Font FONT_STATUS;
+        FONT_STATUS = new Font("OCR A Extended", 0, 14);
     }
 }

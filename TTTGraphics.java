@@ -1,3 +1,5 @@
+package out;
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -12,34 +14,34 @@ public class TTTGraphics extends JFrame {
     public static final int COLS = 3;
 
     // Define named constants for the drawing graphics
-    public static final int CELL_SIZE = 120; // cell width/height (square)
-    public static final int BOARD_WIDTH  = CELL_SIZE * COLS; // the drawing canvas
-    public static final int BOARD_HEIGHT = CELL_SIZE * ROWS;
-    public static final int GRID_WIDTH = 10;                  // Grid-line's width
-    public static final int GRID_WIDTH_HALF = GRID_WIDTH / 2;
+    public static int CELL_SIZE = 120; // cell width/height (square)
+    public static int BOARD_WIDTH  = CELL_SIZE * COLS; // the drawing canvas
+    public static int BOARD_HEIGHT = CELL_SIZE * ROWS;
+    public static int GRID_WIDTH = 10;                  // Grid-line's width
+    public static int GRID_WIDTH_HALF = GRID_WIDTH / 2;
     // Symbols (cross/nought) are displayed inside a cell, with padding from border
-    public static final int CELL_PADDING = CELL_SIZE / 5;
-    public static final int SYMBOL_SIZE = CELL_SIZE - CELL_PADDING * 2; // width/height
-    public static final int SYMBOL_STROKE_WIDTH = 8; // pen's stroke width
-    public static final Color COLOR_BG = Color.WHITE;  // background
-    public static final Color COLOR_BG_STATUS = new Color(216, 216, 216);
-    public static final Color COLOR_GRID   = Color.LIGHT_GRAY;  // grid lines
-    public static final Color COLOR_CROSS  = new Color(211, 45, 65);  // Red #D32D41
-    public static final Color COLOR_NOUGHT = new Color(76, 181, 245); // Blue #4CB5F5
-    public static final Font FONT_STATUS = new Font("OCR A Extended", Font.PLAIN, 14);
+    public static int CELL_PADDING = CELL_SIZE / 5;
+    public static int SYMBOL_SIZE = CELL_SIZE - CELL_PADDING * 2; // width/height
+    public static int SYMBOL_STROKE_WIDTH = 8; // pen's stroke width
+    public static Color COLOR_BG = Color.WHITE;  // background
+    public static Color COLOR_BG_STATUS = new Color(216, 216, 216);
+    public static Color COLOR_GRID   = Color.LIGHT_GRAY;  // grid lines
+    public static Color COLOR_CROSS  = new Color(211, 45, 65);  // Red #D32D41
+    public static Color COLOR_NOUGHT = new Color(76, 181, 245); // Blue #4CB5F5
+    public static Font FONT_STATUS = new Font("OCR A Extended", Font.PLAIN, 14);
 
     // This enum (inner class) contains the various states of the game
-    public enum State {
-        PLAYING, DRAW, CROSS_WON, NOUGHT_WON
-    }
+//    public enum State {
+//        PLAYING, DRAW, CROSS_WON, NOUGHT_WON
+//    }
     private State currentState;  // the current game state
 
     // This enum (inner class) is used for:
     // 1. Player: CROSS, NOUGHT
     // 2. Cell's content: CROSS, NOUGHT and NO_SEED
-    public enum Seed {
-        CROSS, NOUGHT, NO_SEED
-    }
+//    public enum Seed {
+//        CROSS, NOUGHT, NO_SEED
+//    }
     private Seed currentPlayer; // the current player
     private Seed[][] board;     // Game board of ROWS-by-COLS cells
 
@@ -57,28 +59,22 @@ public class TTTGraphics extends JFrame {
         gamePanel.setPreferredSize(new Dimension(BOARD_WIDTH, BOARD_HEIGHT));
 
         // The canvas (JPanel) fires a MouseEvent upon mouse-click
-        gamePanel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {  // mouse-clicked handler
+        this.gamePanel.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
                 int mouseX = e.getX();
                 int mouseY = e.getY();
-                // Get the row and column clicked
-                int row = mouseY / CELL_SIZE;
-                int col = mouseX / CELL_SIZE;
-
-                if (currentState == State.PLAYING) {
-                    if (row >= 0 && row < ROWS && col >= 0
-                            && col < COLS && board[row][col] == Seed.NO_SEED) {
-                        // Update board[][] and return the new game state after the move
-                        currentState = stepGame(currentPlayer, row, col);
-                        // Switch player
-                        currentPlayer = (currentPlayer == Seed.CROSS) ? Seed.NOUGHT : Seed.CROSS;
+                int row = mouseY / 120;
+                int col = mouseX / 120;
+                if (TTTGraphics.this.currentState == TTTGraphics.State.PLAYING) {
+                    if (row >= 0 && row < 3 && col >= 0 && col < 3 && TTTGraphics.this.board[row][col] == TTTGraphics.Seed.NO_SEED) {
+                        TTTGraphics.this.currentState = TTTGraphics.this.stepGame(TTTGraphics.this.currentPlayer, row, col);
+                        TTTGraphics.this.currentPlayer = TTTGraphics.this.currentPlayer == TTTGraphics.Seed.CROSS ? TTTGraphics.Seed.NOUGHT : TTTGraphics.Seed.CROSS;
                     }
-                } else {       // game over
-                    newGame(); // restart the game
+                } else {
+                    TTTGraphics.this.newGame();
                 }
-                // Refresh the drawing canvas
-                repaint();  // Callback paintComponent().
+
+                TTTGraphics.this.repaint();
             }
         });
 
@@ -154,6 +150,42 @@ public class TTTGraphics extends JFrame {
                 }
             }
             return State.DRAW; // no empty cell, it's a draw
+        }
+    }
+
+//    public static void main(String[] args) {
+//        SwingUtilities.invokeLater(new Runnable() {
+//            public void run() {
+//                new TTTGraphics();
+//            }
+//        });
+//    }
+
+    static {
+        COLOR_BG = Color.WHITE;
+        COLOR_BG_STATUS = new Color(216, 216, 216);
+        COLOR_GRID = Color.LIGHT_GRAY;
+        COLOR_CROSS = new Color(211, 45, 65);
+        COLOR_NOUGHT = new Color(76, 181, 245);
+        FONT_STATUS = new Font("OCR A Extended", 0, 14);
+    }
+
+    public static enum State {
+        PLAYING,
+        DRAW,
+        CROSS_WON,
+        NOUGHT_WON;
+
+        private State() {
+        }
+    }
+
+    public static enum Seed {
+        CROSS,
+        NOUGHT,
+        NO_SEED;
+
+        private Seed() {
         }
     }
 

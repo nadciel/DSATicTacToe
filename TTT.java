@@ -1,84 +1,80 @@
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by FernFlower decompiler)
+//
+
 package out;
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import javax.swing.BorderFactory;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
-/**
- * Tic-Tac-Toe: Two-player Graphic version with better OO design.
- * The Board and Cell classes are separated in their own classes.
- */
 public class TTT extends JPanel {
-    private static final long serialVersionUID = 1L; // to prevent serializable warning
+    private static final long serialVersionUID = 1L;
+    public static final String TITLE = "Tic Tac Toe";
+    public static final Color COLOR_BG;
+    public static final Color COLOR_BG_STATUS;
+    public static final Color COLOR_CROSS;
+    public static final Color COLOR_NOUGHT;
+    public static final Font FONT_STATUS;
+    private Board board;
+    private State currentState;
+    private Seed currentPlayer;
+    private JLabel statusBar;
 
-    // Define named constants for the drawing graphics
-    public static java.lang.String TITLE = "Tic Tac Toe";
-    public static Color COLOR_BG = Color.WHITE;
-    public static Color COLOR_BG_STATUS = new Color(216, 216, 216);
-    public static Color COLOR_CROSS = new Color(239, 105, 80);  // Red #EF6950
-
-    // Define game objects
-    private Board board;         // the game board
-    private State currentState;  // the current state of the game
-    private Seed currentPlayer;  // the current player
-    private JLabel statusBar;    // for displaying status message
-
-    /** Constructor to setup the UI and game components */
     public TTT() {
-
-        // This JPanel fires MouseEvent
         super.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {  // mouse-clicked handler
+            public void mouseClicked(MouseEvent e) {
                 int mouseX = e.getX();
                 int mouseY = e.getY();
-                // Get the row and column clicked
-                int row = mouseY / Cell.SIZE;
-                int col = mouseX / Cell.SIZE;
-
-                if (currentState == State.PLAYING) {
-                    if (row >= 0 && row < Board.ROWS && col >= 0 && col < Board.COLS
-                            && board.cells[row][col].content == Seed.NO_SEED) {
-                        // Update cells[][] and return the new game state after the move
-                        currentState = board.stepGame(currentPlayer, row, col);
-                        // Play appropriate sound clip
-                        if (currentState == State.PLAYING) {
+                int row = mouseY / 120;
+                int col = mouseX / 120;
+                System.out.println("totoro" + row + " " + col);
+                if (TTT.this.currentState == State.PLAYING) {
+                    if (row >= 0 && row < 3 && col >= 0 && col < 3 && TTT.this.board.cells[row][col].content == Seed.NO_SEED) {
+                        TTT.this.currentState = TTT.this.board.stepGame(TTT.this.currentPlayer, row, col);
+                        if (TTT.this.currentState == State.PLAYING) {
                             SoundEffect.gogo.play();
                         } else {
                             SoundEffect.die.play();
                         }
-                        // Switch player
-                        currentPlayer = (currentPlayer == Seed.totoro) ? Seed.piggy : Seed.totoro;
+
+                        TTT.this.currentPlayer = TTT.this.currentPlayer == Seed.totoro ? Seed.piggy : Seed.totoro;
                     }
-                } else {        // game over
-                    newGame();  // restart the game
+                } else {
+                    TTT.this.newGame();
                 }
-                // Refresh the drawing canvas
+
                 TTT.this.repaint();
                 if (TTT.this.currentState == State.PLAYING && TTT.this.currentPlayer == Seed.piggy) {
                     TTT.this.playComp();
                 }
+
             }
         });
-
-        // Setup the status bar (JLabel) to display status message
-        statusBar = new JLabel();
-        //statusBar.setFont(TTTGraphics.FONT_STATUS);
-        statusBar.setBackground(COLOR_BG_STATUS);
-        statusBar.setOpaque(true);
-        statusBar.setPreferredSize(new Dimension(300, 30));
-        statusBar.setHorizontalAlignment(JLabel.LEFT);
-        statusBar.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 12));
-
+        this.statusBar = new JLabel();
+        this.statusBar.setFont(FONT_STATUS);
+        this.statusBar.setBackground(COLOR_BG_STATUS);
+        this.statusBar.setOpaque(true);
+        this.statusBar.setPreferredSize(new Dimension(300, 30));
+        this.statusBar.setHorizontalAlignment(2);
+        this.statusBar.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 12));
         super.setLayout(new BorderLayout());
-        super.add(statusBar, BorderLayout.PAGE_END); // same as SOUTH
-        super.setPreferredSize(new Dimension(Board.CANVAS_WIDTH, Board.CANVAS_HEIGHT + 30));
-        // account for statusBar in height
+        super.add(this.statusBar, "Last");
+        super.setPreferredSize(new Dimension(360, 390));
         super.setBorder(BorderFactory.createLineBorder(COLOR_BG_STATUS, 2, false));
-
-        // Set up Game
-        initGame();
-        newGame();
+        this.initGame();
+        this.newGame();
     }
 
     private void playComp() {
@@ -108,24 +104,21 @@ public class TTT extends JPanel {
 
     }
 
-    /** Initialize the game (run once) */
     public void initGame() {
-        board = new Board();  // allocate the game-board
+        this.board = new Board();
     }
 
-    /** Reset the game-board contents and the current-state, ready for new game */
     public void newGame() {
-        for (int row = 0; row < Board.ROWS; ++row) {
-            for (int col = 0; col < Board.COLS; ++col) {
-                board.cells[row][col].content = Seed.NO_SEED; // all cells empty
+        for(int row = 0; row < 3; ++row) {
+            for(int col = 0; col < 3; ++col) {
+                this.board.cells[row][col].content = Seed.NO_SEED;
             }
         }
-        currentPlayer = Seed.totoro;    // cross plays first
-        currentState = State.PLAYING;  // ready to play
+
+        this.currentPlayer = Seed.totoro;
+        this.currentState = State.PLAYING;
     }
 
-    /** Custom painting codes on this JPanel */
-    @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         this.setBackground(COLOR_BG);
@@ -163,8 +156,7 @@ public class TTT extends JPanel {
         COLOR_BG = Color.WHITE;
         COLOR_BG_STATUS = new Color(216, 216, 216);
         COLOR_CROSS = new Color(239, 105, 80);
-        java.awt.Color COLOR_NOUGHT = new Color(64, 154, 225);
-        java.awt.Font FONT_STATUS;
+        COLOR_NOUGHT = new Color(64, 154, 225);
         FONT_STATUS = new Font("OCR A Extended", 0, 14);
     }
 }

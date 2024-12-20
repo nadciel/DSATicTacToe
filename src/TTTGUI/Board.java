@@ -1,4 +1,3 @@
-package TTTGUI;
 import java.awt.*;
 /**
  * The Board class models the ROWS-by-COLS game board.
@@ -69,7 +68,7 @@ public class Board {
                 && cells[0][2].content == player
                 && cells[1][1].content == player
                 && cells[2][0].content == player) {
-            return (player == Seed.totoro) ? State.CROSS_WON : State.NOUGHT_WON;
+            return (player == Seed.CROSS) ? State.CROSS_WON : State.NOUGHT_WON;
         } else {
             // Nobody win. Check for DRAW (all cells occupied) or PLAYING.
             for (int row = 0; row < ROWS; ++row) {

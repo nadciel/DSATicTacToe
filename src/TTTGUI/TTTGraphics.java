@@ -67,17 +67,19 @@ public class TTTGraphics extends JFrame {
                 int row = mouseY / CELL_SIZE;
                 int col = mouseX / CELL_SIZE;
 
-                if (currentState == State.PLAYING) {
-                    if (row >= 0 && row < ROWS && col >= 0
-                            && col < COLS && board[row][col] == Seed.NO_SEED) {
-                        // Update board[][] and return the new game state after the move
-                        currentState = stepGame(currentPlayer, row, col);
-                        // Switch player
-                        currentPlayer = (currentPlayer == Seed.CROSS) ? Seed.NOUGHT : Seed.CROSS;
+                if (col >= 0 && col< COLS) {
+                    // Look for an empty cell starting from the bottom row
+                    for ( row = ROWS -1; row >= 0; row--) {
+                        if (board[row][col] == Seed.NO_SEED) {
+                            board[row][col] = currentPlayer; // Make a move
+                            stepGame(currentPlayer, row, col); // update state
+                            // Switch player
+                            currentPlayer = (currentPlayer == Seed.CROSS) ? Seed.NOUGHT : Seed.CROSS;
+                            break;
+                        }
                     }
-                } else {       // game over
-                    newGame(); // restart the game
                 }
+
                 // Refresh the drawing canvas
                 repaint();  // Callback paintComponent().
             }
